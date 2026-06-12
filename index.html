@@ -85,13 +85,16 @@
 /* État ACTIVÉ pour les mots verticaux (Deviennent bleus) */
 .scrabble-tile.tile-selected {
     opacity: 1 !important;
-    transform: translateY(0) !important;
-    background: radial-gradient(circle at top left, #003189 0%, #001f5c 100%) !important;
-    color: white !important;
-    border-color: #003189 !important;
-    box-shadow: 0 10px 20px rgba(0, 49, 137, 0.2) !important;
+    transform: translateY(0) scale(1) !important;
+    background: radial-gradient(circle at top left, #ffffff 0%, #f1f5f9 100%) !important;
+    color: #003189 !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.25),
+                0 4px 8px rgba(0, 0, 0, 0.18),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
     z-index: 20;
 }
+
 
 /* État ACTIVÉ pour les lettres M-E-R-C-I (Deviennent orange) */
 .scrabble-tile-main.active {
@@ -395,12 +398,15 @@
 .scrabble-tile.tile-selected {
     opacity: 1 !important;
     transform: translateY(0) scale(1) !important;
-    background: radial-gradient(circle at top left, #003189 0%, #001f5c 100%) !important;
-    color: white !important;
-    border-color: #003189 !important;
-    box-shadow: 0 10px 20px rgba(0, 49, 137, 0.2) !important;
+    background: radial-gradient(circle at top left, #ffffff 0%, #f1f5f9 100%) !important;
+    color: #003189 !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.25),
+                0 4px 8px rgba(0, 0, 0, 0.18),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
     z-index: 20;
 }
+
 
 /* État ACTIVÉ pour le mot M-E-R-C-I (devient orange) */
 .scrabble-tile-main.active {
