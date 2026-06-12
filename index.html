@@ -2570,7 +2570,7 @@ function nextSlide() {
     const maxSteps = slideSteps[currentSlideIndex] || 0;
 
     // Si moins de 10s et qu'il reste des sous-étapes à montrer
-    if (maxSteps > 0 && currentSubStep < maxSteps && timeElapsed < 10000) {
+    if (maxSteps > 0 && currentSubStep < maxSteps && timeElapsed < 1000000) {
         currentSubStep++;
         applySubStep(currentSlideIndex, currentSubStep);
     } else {
