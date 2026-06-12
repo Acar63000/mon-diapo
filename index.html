@@ -26,8 +26,9 @@
 
    <script src="https://unpkg.com/lucide@latest"></script>
    
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap">
+   
    <style>
-
 /* Nouvel effet de surbrillance premium pour l'oral */
 .highlight-active {
     transform: scale(1.04) translateY(-4px) !important;
@@ -38,6 +39,71 @@
     z-index: 40 !important;
     transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
+
+
+/* ========================================== */
+/* SCRABBLE EN APPARITION PROGRESSIVE FLUIDE  */
+/* ========================================== */
+
+/* Style de base pour les mots verticaux (Cachés et blancs au début) */
+.scrabble-tile {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: 900;
+    opacity: 0; 
+    transform: translateY(10px);
+    background: radial-gradient(circle at top left, #ffffff 0%, #f1f5f9 100%) !important;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8) !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #003189 !important;
+    transition: opacity 0.4s ease-out, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), background 0.4s, color 0.4s !important;
+}
+
+/* Style de base pour les lettres horizontales M-E-R-C-I (Visibles mais blanches au début) */
+.scrabble-tile-main {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: 900;
+    opacity: 1 !important; 
+    background: radial-gradient(circle at top left, #ffffff 0%, #f1f5f9 100%) !important;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8) !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #003189 !important;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+/* État ACTIVÉ pour les mots verticaux (Deviennent bleus) */
+.scrabble-tile.tile-selected {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    background: radial-gradient(circle at top left, #003189 0%, #001f5c 100%) !important;
+    color: white !important;
+    border-color: #003189 !important;
+    box-shadow: 0 10px 20px rgba(0, 49, 137, 0.2) !important;
+    z-index: 20;
+}
+
+/* État ACTIVÉ pour les lettres M-E-R-C-I (Deviennent orange) */
+.scrabble-tile-main.active {
+    background: radial-gradient(circle at top left, #ffb703 0%, #f29400 100%) !important;
+    color: white !important;
+    border-color: #b45309 !important;
+    transform: scale(1.15) !important;
+    box-shadow: 0 10px 20px rgba(242, 148, 0, 0.3) !important;
+    z-index: 50;
+}
+
+
 
 /* Version lueur bleue pour les blocs foncés */
 .highlight-active-blue {
@@ -60,17 +126,22 @@
           position: relative;
       }
 
-      .dimmed {
-          opacity: 0.15 !important;
-          filter: blur(1.5px);
-          transition: all 0.6s ease;
-      }
+/* 1. On définit que quand un parent a la classe 'is-zoomed', ses enfants directs sont atténués */
+.is-zoomed > *:not(.zoom-target-active) {
+    opacity: 0.15 !important;
+    filter: blur(2px) !important;
+    transition: all 0.5s ease;
+    pointer-events: none;
+}
 
-      .zoom-target-active {
-          transform: scale(1.12) translateY(-8px);
-          box-shadow: 0 25px 50px -12px rgba(0, 49, 137, 0.35);
-          z-index: 100 !important;
-      }
+/* 2. On garde l'élément actif bien net et au-dessus */
+.zoom-target-active {
+    opacity: 1 !important;
+    filter: blur(0px) !important;
+    transform: scale(1.05) !important; 
+    z-index: 100 !important;
+    position: relative;
+}
 
       body {
           font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
@@ -78,7 +149,6 @@
           -moz-osx-font-smoothing: grayscale;
           text-rendering: optimizeLegibility;
       }
-
       .fade-in-up {
         opacity: 0;
         transform: translateY(10px);
@@ -283,25 +353,69 @@
           .booklet-container, .booklet-scaler { transform: scale(0.55); }
       }
 
-      /* Style spécifique pour le Scrabble aux couleurs DGFiP */
-      .scrabble-tile {
-          background: radial-gradient(circle at top left, #ffffff 0%, #f1f5f9 100%);
-          box-shadow: 0 4px 6px -1px rgba(0,0,0,0.15), 0 2px 4px -1px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8);
-          border: 1px solid #cbd5e1;
-          color: #003189;
-      }
-      .scrabble-tile-main {
-          background: radial-gradient(circle at top left, #ffb703 0%, #f29400 100%);
-          box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2), 0 2px 4px -1px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.6);
-          border: 1px solid #b45309;
-          color: white;
-      }
+     /* ========================================== */
+/* SCRABBLE EN APPARITION PROGRESSIVE FLUIDE  */
+/* ========================================== */
 
-      /* Scrollbars */
-      ::-webkit-scrollbar { width: 6px; }
-      ::-webkit-scrollbar-track { background: transparent; }
-      ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-      ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+/* Style par défaut des mots verticaux (masqués au début) */
+.scrabble-tile {
+    opacity: 0 !important; /* Caché au départ */
+    transform: translateY(10px) scale(1) !important;
+    background: radial-gradient(circle at top left, #ffffff 0%, #f1f5f9 100%) !important;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8) !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #003189 !important;
+    display: flex !important; /* Garde l'alignement centré de la lettre */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: 900;
+    transition: opacity 0.4s ease-out, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), background 0.4s, color 0.4s !important;
+}
+
+/* Style par défaut pour les lettres horizontales M-E-R-C-I (visibles mais blanches) */
+.scrabble-tile-main {
+    opacity: 1 !important; /* Toujours visible */
+    transform: scale(1) !important;
+    background: radial-gradient(circle at top left, #ffffff 0%, #f1f5f9 100%) !important;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8) !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #003189 !important;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: 900;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+/* État ACTIVÉ pour les mots verticaux (deviennent bleus et descendent) */
+.scrabble-tile.tile-selected {
+    opacity: 1 !important;
+    transform: translateY(0) scale(1) !important;
+    background: radial-gradient(circle at top left, #003189 0%, #001f5c 100%) !important;
+    color: white !important;
+    border-color: #003189 !important;
+    box-shadow: 0 10px 20px rgba(0, 49, 137, 0.2) !important;
+    z-index: 20;
+}
+
+/* État ACTIVÉ pour le mot M-E-R-C-I (devient orange) */
+.scrabble-tile-main.active {
+    background: radial-gradient(circle at top left, #ffb703 0%, #f29400 100%) !important;
+    color: white !important;
+    border-color: #b45309 !important;
+    transform: scale(1.15) !important;
+    box-shadow: 0 10px 20px rgba(242, 148, 0, 0.3) !important;
+    z-index: 50;
+}
+
+      /* Animation fluide quand on clique */
+      .scrabble-tile {
+          transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), background 0.25s, color 0.25s, box-shadow 0.25s !important;
+      }
    </style>
 </head>
 
@@ -1433,52 +1547,58 @@
                            <h3 class="text-2xl font-black text-dgfip-blue uppercase tracking-wider text-center leading-tight">L'apport du stage<br>en 5 lettres</h3>
                         </div>
                         <div class="flex-1 flex items-center justify-center my-auto py-1">
-                           <div class="p-3 bg-dgfip-blueDeep rounded-2xl border-4 border-dgfip-blue shadow-inner relative" style="display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); grid-template-rows: repeat(12, minmax(0, 1fr)); gap: 4px; width: 400px; height: 420px;">
-                              <div class="scrabble-tile-main flex flex-col items-center justify-center rounded-lg text-2xl font-black relative cursor-default" style="grid-row: 2; grid-column: 2;">M<span class="text-[8px] absolute bottom-1 right-1">2</span></div>
-                              <div class="scrabble-tile-main flex flex-col items-center justify-center rounded-lg text-2xl font-black relative cursor-default" style="grid-row: 2; grid-column: 4;">E<span class="text-[8px] absolute bottom-1 right-1">1</span></div>
-                              <div class="scrabble-tile-main flex flex-col items-center justify-center rounded-lg text-2xl font-black relative cursor-default" style="grid-row: 2; grid-column: 6;">R<span class="text-[8px] absolute bottom-1 right-1">1</span></div>
-                              <div class="scrabble-tile-main flex flex-col items-center justify-center rounded-lg text-2xl font-black relative cursor-default" style="grid-row: 2; grid-column: 8;">C<span class="text-[8px] absolute bottom-1 right-1">3</span></div>
-                              <div class="scrabble-tile-main flex flex-col items-center justify-center rounded-lg text-2xl font-black relative cursor-default" style="grid-row: 2; grid-column: 10;">I<span class="text-[8px] absolute bottom-1 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 3; grid-column: 2;">É<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 4; grid-column: 2;">D<span class="text-[6px] absolute bottom-0.5 right-1">2</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 5; grid-column: 2;">I<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 6; grid-column: 2;">A<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 7; grid-column: 2;">T<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 8; grid-column: 2;">I<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 9; grid-column: 2;">O<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 10; grid-column: 2;">N<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 3; grid-column: 4;">N<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 4; grid-column: 4;">T<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 5; grid-column: 4;">R<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 6; grid-column: 4;">A<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 7; grid-column: 4;">I<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 8; grid-column: 4;">D<span class="text-[6px] absolute bottom-0.5 right-1">2</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 9; grid-column: 4;">E<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 3; grid-column: 6;">I<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 4; grid-column: 6;">G<span class="text-[6px] absolute bottom-0.5 right-1">2</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 5; grid-column: 6;">U<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 6; grid-column: 6;">E<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 7; grid-column: 6;">U<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 8; grid-column: 6;">R<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 3; grid-column: 8;">O<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 4; grid-column: 8;">N<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 5; grid-column: 8;">F<span class="text-[6px] absolute bottom-0.5 right-1">4</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 6; grid-column: 8;">I<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 7; grid-column: 8;">A<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 8; grid-column: 8;">N<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 9; grid-column: 8;">C<span class="text-[6px] absolute bottom-0.5 right-1">3</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 10; grid-column: 8;">E<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 3; grid-column: 10;">N<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 4; grid-column: 10;">T<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 5; grid-column: 10;">É<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 6; grid-column: 10;">G<span class="text-[6px] absolute bottom-0.5 right-1">2</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 7; grid-column: 10;">R<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 8; grid-column: 10;">A<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 9; grid-column: 10;">T<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 10; grid-column: 10;">I<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 11; grid-column: 10;">O<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                              <div class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-sm font-black text-slate-900 relative cursor-default" style="grid-row: 12; grid-column: 10;">N<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
-                           </div>
+                           <div class="p-3 bg-dgfip-blueDeep rounded-2xl border-4 border-dgfip-blue shadow-inner relative"
+     style="display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); grid-template-rows: repeat(12, minmax(0, 1fr)); gap: 6px; width: 420px; height: 440px;">
+  <div class="scrabble-tile-main flex flex-col items-center justify-center rounded-lg text-2xl font-black relative cursor-default" style="grid-row: 2; grid-column: 2;">M<span class="text-[8px] absolute bottom-1 right-1">2</span></div>
+  <div class="scrabble-tile-main flex flex-col items-center justify-center rounded-lg text-2xl font-black relative cursor-default" style="grid-row: 2; grid-column: 4;">E<span class="text-[8px] absolute bottom-1 right-1">1</span></div>
+  <div class="scrabble-tile-main flex flex-col items-center justify-center rounded-lg text-2xl font-black relative cursor-default" style="grid-row: 2; grid-column: 6;">R<span class="text-[8px] absolute bottom-1 right-1">1</span></div>
+  <div class="scrabble-tile-main flex flex-col items-center justify-center rounded-lg text-2xl font-black relative cursor-default" style="grid-row: 2; grid-column: 8;">C<span class="text-[8px] absolute bottom-1 right-1">3</span></div>
+  <div class="scrabble-tile-main flex flex-col items-center justify-center rounded-lg text-2xl font-black relative cursor-default" style="grid-row: 2; grid-column: 10;">I<span class="text-[8px] absolute bottom-1 right-1">1</span></div>
+  
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 3; grid-column: 2;">É<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 4; grid-column: 2;">D<span class="text-[6px] absolute bottom-0.5 right-1">2</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 5; grid-column: 2;">I<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 6; grid-column: 2;">A<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 7; grid-column: 2;">T<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 8; grid-column: 2;">I<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 9; grid-column: 2;">O<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 10; grid-column: 2;">N<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 3; grid-column: 4;">N<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 4; grid-column: 4;">T<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 5; grid-column: 4;">R<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 6; grid-column: 4;">A<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 7; grid-column: 4;">I<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 8; grid-column: 4;">D<span class="text-[6px] absolute bottom-0.5 right-1">2</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 9; grid-column: 4;">E<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 3; grid-column: 6;">I<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 4; grid-column: 6;">G<span class="text-[6px] absolute bottom-0.5 right-1">2</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 5; grid-column: 6;">U<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 6; grid-column: 6;">E<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 7; grid-column: 6;">U<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 8; grid-column: 6;">R<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 3; grid-column: 8;">O<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 4; grid-column: 8;">N<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 5; grid-column: 8;">F<span class="text-[6px] absolute bottom-0.5 right-1">4</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 6; grid-column: 8;">I<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 7; grid-column: 8;">A<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 8; grid-column: 8;">N<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 9; grid-column: 8;">C<span class="text-[6px] absolute bottom-0.5 right-1">3</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 10; grid-column: 8;">E<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 3; grid-column: 10;">N<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 4; grid-column: 10;">T<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 5; grid-column: 10;">É<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 6; grid-column: 10;">G<span class="text-[6px] absolute bottom-0.5 right-1">2</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 7; grid-column: 10;">R<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 8; grid-column: 10;">A<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 9; grid-column: 10;">T<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 10; grid-column: 10;">I<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 11; grid-column: 10;">O<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+  <div onclick="toggleTile(this)" class="scrabble-tile flex flex-col items-center justify-center rounded-lg text-xl font-black text-slate-900 relative cursor-pointer" style="grid-row: 12; grid-column: 10;">N<span class="text-[6px] absolute bottom-0.5 right-1">1</span></div>
+</div>
                         </div>
                      </div>
                   </div>
@@ -1497,7 +1617,7 @@
                            <p class="hover:text-dgfip-blue transition duration-200">Mes collègues,</p>
                         </div>
                         <div class="text-center py-2 shrink-0">
-                           <span class="text-4xl font-black text-dgfip-blue uppercase tracking-widest whitespace-nowrap text-center block">Merci pour tout !</span>
+                           <span class="text-4xl font-black text-dgfip-blue uppercase tracking-widest whitespace-nowrap text-center block" style="opacity: 0; visibility: hidden;"></span>
                            <div class="h-[4px] w-24 bg-dgfip-orange mx-auto my-3 rounded-full"></div>
                         </div>
                      </div>
@@ -1909,6 +2029,11 @@
             `;
             navContainer.appendChild(item);
          });
+      }
+// Gère le clic sur les tuiles du Scrabble (changement couleur + zoom)
+      function toggleTile(element) {
+          if (isTransitioning) return;
+          element.classList.toggle('tile-selected');
       }
 
       function toggleSlide4Problem(show) {
@@ -2919,27 +3044,26 @@ let slideStartTime = Date.now();
 
 const slideSteps = {
     1: 0,  // Page de garde
-    2: 3,  // Introduction : Septembre, Automne, Janvier
-    3: 2,  // La DGFiP : Fusion, puis Bloc Missions
-    4: 2,  // SGC Communes : Avant (Rose), puis Après (Vert)
-    5: 4,  // Hiérarchie : Central, National, Départemental, Clermont
-    6: 2,  // Périmètre : Recouvrement (Vert) VS Hors Compétences (Rouge)
-    7: 5,  // Cycle : Les 5 étapes de la chronologie
-    8: 2,  // Recouvrement Forcé : Processus Coercitif, puis Voies d'Exécution
-    9: 2,  // Indicateurs : Taux global, puis Décrochage minute
-    10: 2, // Recherche d'infos : Non-valeur, puis les 5 étapes du tableau
-    11: 2, // Savoirs développés : Savoir-Faire, puis Savoir-Être
-    12: 2, // Analyse Critique : Points forts, puis Points de vigilance
-    13: 2, // Bilan d'immersion : Bloc Terrain, puis Avenir Alternance/Concours
-    14: 1, // Remerciements : Liste des encadrants
-    15: 0, // Clôture Soutenance
-    16: 3, // Portfolio Intro : Professionnel, Universitaire, Sportif
-    17: 2, // P1 Emploi d'été : Missions (Gauche), puis Compétences (Droite)
-    18: 2, // P2 Projet Universitaire : SAÉ (Gauche), puis Compétences (Droite)
-    19: 2, // P3 Expérience Sportive : ASM (Gauche), puis Compétences (Droite)
-    20: 0  // Clôture Portfolio
+    2: 3,  // Introduction (3 blocs obtention)
+    3: 4,  // La DGFiP & Contexte (2 blocs G + 2 blocs D = 4)
+    4: 9,  // Avant (4 blocs) + Après (5 blocs) = 9
+    5: 8,  // Échelons (4) + Pôles (4) = 8
+    6: 8,  // Missions (4) + Hors compétences (4) = 8
+    7: 8,  // Cycle (3 blocs G) + Étapes (5 jalons D) = 8
+    8: 5,  // Processus global (1) + Voies d'exécution (4) = 5
+    9: 2,  // Graphiques (2)
+    10: 6, // Recherche d'infos (Bloc rose G + 5 lignes tableau D) = 6
+    11: 6, // Savoirs (3 Savoir-faire + 3 Savoir-être) = 6
+    12: 4, // Analyse Critique (2 Forts + 2 Vigilances) = 4
+    13: 5, // Bilan (Intégration, Savoir-être, Alternance, Concours) = 4
+    14: 8, // Remerciements (1: Scrabble, 2: Animation "Merci pour tout !")
+    15: 0, // Clôture
+    16: 3, // Portfolio Intro (3 pôles)
+    17: 2, // P1 (1: Cadre, 2: Compétences)
+    18: 2, // P2 (1: Cadre, 2: Compétences)
+    19: 2, // P3 (1: Cadre, 2: Compétences)
+    20: 0  // Fin
 };
-
 const originalGoToSlide = goToSlide;
 goToSlide = function(index) {
     slideStartTime = Date.now();
@@ -2951,101 +3075,275 @@ function applySubStep(slideIndex, step) {
     const slideEl = document.getElementById(`slide-${slideIndex}`);
     if (!slideEl) return;
 
+    // 1. RÉINITIALISATION TOTALE (Nettoyage de la double page)
     slideEl.querySelectorAll('.highlight-active, .zoom-target-active, .focus-active').forEach(el => {
         el.classList.remove('highlight-active', 'zoom-target-active', 'focus-active');
     });
-    slideEl.querySelectorAll('div, h3, h4, h5, img, i, p, span').forEach(el => el.classList.remove('dimmed'));
+    slideEl.querySelectorAll('div, h3, h4, h5, img, i, p, span, section').forEach(el => {
+        el.classList.remove('dimmed');
+    });
 
+    // Étape 0 : Tout est normal au début
     if (step === 0) return;
 
-    const isBookOpen = [2, 14, 17, 19].includes(slideIndex) && document.getElementById('master-book-container').style.opacity === '1';
-    const ctx = isBookOpen ? document.getElementById('master-book') : slideEl;
+    // IDENTIFICATION DES PAGES & CONTENEURS CLÉS
+    const pageG = slideEl.querySelector('[id$="-left-page-content"]');
+    const pageD = slideEl.querySelector('[id$="-right-page-content"]');
 
     switch (slideIndex) {
-        case 2:
-            const introBlocks = ctx.querySelectorAll('.bg-white.p-5.rounded-xl.border-2');
-            introBlocks.forEach((b, i) => i === (step - 1) ? b.classList.add('highlight-active') : b.classList.add('dimmed'));
+        case 2: // Introduction
+            if(pageG) pageG.classList.add('dimmed');
+            const introBlocks = slideEl.querySelectorAll('#slide-2-right-page-content .bg-white.p-5');
+            introBlocks.forEach((b, i) => {
+                if (i === (step - 1)) b.classList.add('highlight-active');
+                else b.classList.add('dimmed');
+            });
             break;
-        case 3:
-            const schemaFusion = ctx.querySelector('.relative.flex.flex-col.items-center');
-            const missionsDgfip = ctx.querySelector('.bg-white.border.border-slate-200.p-5');
-            if (step === 1 && schemaFusion && missionsDgfip) { missionsDgfip.classList.add('dimmed'); schemaFusion.classList.add('highlight-active'); }
-            if (step === 2 && schemaFusion && missionsDgfip) { schemaFusion.classList.add('dimmed'); missionsDgfip.classList.add('highlight-active'); }
+
+        case 3: // La DGFiP & Contexte
+            const schema = slideEl.querySelector('.relative.flex.flex-col.items-center');
+            const missions = slideEl.querySelector('.bg-white.border.border-slate-200.p-5');
+            const maptam = slideEl.querySelector('.bg-gradient-to-br.from-amber-50');
+            const sgounif = slideEl.querySelector('.bg-white.border.border-slate-200.p-6');
+
+            if (schema) schema.classList.add('dimmed');
+            if (missions) missions.classList.add('dimmed');
+            if (maptam) maptam.classList.add('dimmed');
+            if (sgounif) sgounif.classList.add('dimmed');
+
+            if (step === 1 && schema) schema.classList.replace('dimmed', 'highlight-active');
+            else if (step === 2 && missions) missions.classList.replace('dimmed', 'highlight-active');
+            else if (step === 3 && maptam) maptam.classList.replace('dimmed', 'highlight-active');
+            else if (step === 4 && sgounif) sgounif.classList.replace('dimmed', 'highlight-active');
             break;
-        case 4:
-            const colGauche4 = ctx.querySelector('#slide-4-left-page-content .bg-rose-50\\/50');
-            const colDroite4 = ctx.querySelector('#slide-4-right-page-content .bg-emerald-50\\/50');
-            if (step === 1 && colGauche4 && colDroite4) { colDroite4.classList.add('dimmed'); colGauche4.classList.add('highlight-active'); }
-            if (step === 2 && colGauche4 && colDroite4) { colGauche4.classList.add('dimmed'); colDroite4.classList.add('highlight-active'); }
+
+        case 4: // SGC Communes (Avant / Après)
+            const avantBlocks = slideEl.querySelectorAll('#slide-4-left-page-content .bg-white.p-4');
+            const apresBlocks = slideEl.querySelectorAll('#slide-4-right-page-content .bg-white.p-3\\.5, #slide-4-right-page-content .bg-gradient-to-br, #slide-4-right-page-content .bg-white.p-4');
+            const tousLesSubBlocs4 = [...avantBlocks, ...apresBlocks];
+            tousLesSubBlocs4.forEach((b, i) => {
+                if (i === (step - 1)) b.classList.add('highlight-active');
+                else b.classList.add('dimmed');
+            });
             break;
-        case 5:
-            const echelons = ctx.querySelectorAll('.relative.pl-14');
-            echelons.forEach((ech, i) => i === (step - 1) ? ech.classList.add('highlight-active') : ech.classList.add('dimmed'));
+
+        case 5: // Structure & Principaux Pôles
+            const echelons = slideEl.querySelectorAll('.relative.pl-14');
+            const poles = slideEl.querySelectorAll('.grid.grid-cols-2.flex-1.py-8 > div');
+            const tousLesBlocs5 = [...echelons, ...poles];
+            tousLesBlocs5.forEach((b, i) => {
+                if (i === (step - 1)) b.classList.add('highlight-active');
+                else b.classList.add('dimmed');
+            });
             break;
-        case 6:
-            const pageG6 = ctx.querySelector('#slide-6-left-page-content');
-            const pageD6 = ctx.querySelector('#slide-5-right-page-content');
-            if (step === 1 && pageG6 && pageD6) { pageD6.classList.add('dimmed'); pageG6.classList.add('highlight-active'); }
-            if (step === 2 && pageG6 && pageD6) { pageG6.classList.add('dimmed'); pageD6.classList.add('highlight-active'); }
+
+        case 6: // Périmètre de Recouvrement
+            const recovBlocks = slideEl.querySelectorAll('#slide-6-left-page-content .flex.items-center.bg-white');
+            const horsBlocks = slideEl.querySelectorAll('#slide-5-right-page-content .flex.items-center.bg-white');
+            const tousLesBlocs6 = [...recovBlocks, ...horsBlocks];
+            tousLesBlocs6.forEach((b, i) => {
+                if (i === (step - 1)) b.classList.add('highlight-active');
+                else b.classList.add('dimmed');
+            });
             break;
-        case 7:
-            const etapesChronologie = ctx.querySelectorAll('.ml-20.flex.flex-col.justify-between.h-full > div');
-            etapesChronologie.forEach((et, i) => i === (step - 1) ? et.classList.add('highlight-active') : et.classList.add('dimmed'));
+
+        case 7: // Cycle & Étapes (Le titre reste intact et visible)
+            const cycleLeft = slideEl.querySelectorAll('#slide-7-left-page-content .flex.items-center');
+            const etapesRight = slideEl.querySelectorAll('.ml-20.flex.flex-col.justify-between.h-full > div');
+            const titreCycle = slideEl.querySelector('#slide-7-left-page-content h3')?.parentElement;
+
+            if (step <= 3) {
+                if(pageD) pageD.classList.add('dimmed');
+                cycleLeft.forEach((b, i) => {
+                    if (i === (step - 1)) b.classList.add('highlight-active');
+                    else b.classList.add('dimmed');
+                });
+            } else {
+                if(pageG) pageG.classList.add('dimmed');
+                if(titreCycle) titreCycle.classList.remove('dimmed'); // Empêche le titre de se flouter
+                const targetEtapeIndex = step - 4;
+                etapesRight.forEach((et, i) => {
+                    if (i === targetEtapeIndex) {
+                        et.style.transform = 'scale(1.08) translateX(10px)';
+                        et.style.transition = 'all 0.4s ease';
+                        et.querySelector('p').style.color = '#003189';
+                        et.querySelector('div').style.boxShadow = '0 0 15px #f29400';
+                    } else {
+                        et.classList.add('dimmed');
+                        et.style.transform = 'scale(0.95)';
+                    }
+                });
+            }
             break;
-        case 8:
-            const blocCoercitif = ctx.querySelector('#slide-8-left-page-content .bg-gradient-to-br');
-            const blocExecution = ctx.querySelector('#slide-8-right-page-content .grid.grid-cols-2');
-            if (step === 1 && blocCoercitif && blocExecution) { blocExecution.classList.add('dimmed'); blocCoercitif.classList.add('highlight-active'); }
-            if (step === 2 && blocCoercitif && blocExecution) { blocCoercitif.classList.add('dimmed'); blocExecution.classList.add('highlight-active'); }
+
+        case 8: // Recouvrement Forcé
+            const procCoercitif = slideEl.querySelector('#slide-8-left-page-content .bg-gradient-to-br');
+            const voiesExec = slideEl.querySelectorAll('#slide-8-right-page-content .grid.grid-cols-2 > div');
+            if (step === 1) {
+                if (procCoercitif) procCoercitif.classList.add('highlight-active');
+                voiesExec.forEach(b => b.classList.add('dimmed'));
+            } else {
+                if (procCoercitif) procCoercitif.classList.add('dimmed');
+                voiesExec.forEach((b, i) => {
+                    if (i === (step - 2)) b.classList.add('highlight-active');
+                    else b.classList.add('dimmed');
+                });
+            }
             break;
-        case 9:
-            const graphs = ctx.querySelectorAll('#slide-9-right-page-content .bg-white.p-6');
-            const leftIndicator = ctx.querySelector('#slide-9-left-page-content');
-            if (step === 1 && graphs.length >= 2) { if(leftIndicator) leftIndicator.classList.add('dimmed'); graphs[1].classList.add('dimmed'); graphs[0].classList.add('highlight-active'); }
-            if (step === 2 && graphs.length >= 2) { if(leftIndicator) leftIndicator.classList.add('dimmed'); graphs[0].classList.add('dimmed'); graphs[1].classList.add('highlight-active'); }
+
+        case 9: // Performance
+            if(pageG) pageG.classList.add('dimmed');
+            const graphs = slideEl.querySelectorAll('#slide-9-right-page-content .bg-white.p-6');
+            graphs.forEach((g, i) => {
+                if (i === (step - 1)) g.classList.add('highlight-active');
+                else g.classList.add('dimmed');
+            });
             break;
-        case 10:
-            const blocNonValeur = ctx.querySelector('.bg-rose-50.p-6');
-            const blocEtapesTraitement = ctx.querySelector('.grid.grid-rows-5');
-            if (step === 1 && blocNonValeur && blocEtapesTraitement) { blocEtapesTraitement.classList.add('dimmed'); blocNonValeur.classList.add('highlight-active'); }
-            if (step === 2 && blocNonValeur && blocEtapesTraitement) { blocNonValeur.classList.add('dimmed'); blocEtapesTraitement.classList.add('highlight-active'); }
+
+        case 10: // Recherche d'infos
+            const leftRose = slideEl.querySelector('.bg-rose-50.p-6');
+            const rightRows = slideEl.querySelectorAll('.grid.grid-rows-5 > div');
+            if (step === 1) {
+                if (leftRose) leftRose.classList.add('highlight-active');
+                rightRows.forEach(r => r.classList.add('dimmed'));
+            } else {
+                if (leftRose) leftRose.classList.add('dimmed');
+                rightRows.forEach((r, i) => {
+                    if (i === (step - 2)) r.classList.add('highlight-active');
+                    else r.classList.add('dimmed');
+                });
+            }
             break;
-        case 11:
-            const savoirFaire = ctx.querySelector('#slide-11-left-page-content');
-            const savoirEtre = ctx.querySelector('#slide-11-right-page-content');
-            if (step === 1 && savoirFaire && savoirEtre) { savoirEtre.classList.add('dimmed'); savoirFaire.classList.add('highlight-active'); }
-            if (step === 2 && savoirFaire && savoirEtre) { savoirFaire.classList.add('dimmed'); savoirEtre.classList.add('highlight-active'); }
+
+        case 11: // Savoirs Développés
+            const savoirsG = slideEl.querySelectorAll('#slide-11-left-page-content .flex.flex-col.gap-4 > div');
+            const savoirsD = slideEl.querySelectorAll('#slide-11-right-page-content .flex.flex-col.gap-4 > div');
+            const tousLesSavoirs = [...savoirsG, ...savoirsD];
+            tousLesSavoirs.forEach((b, i) => {
+                if (i === (step - 1)) b.classList.add('highlight-active');
+                else b.classList.add('dimmed');
+            });
             break;
-        case 12:
-            const blocksForts = ctx.querySelectorAll('.bg-emerald-50\\/40');
-            const blocksVigilance = ctx.querySelectorAll('.bg-rose-50\\/50');
-            if (step === 1) { blocksVigilance.forEach(b => b.classList.add('dimmed')); blocksForts.forEach(b => b.classList.add('highlight-active')); }
-            if (step === 2) { blocksForts.forEach(b => b.classList.add('dimmed')); blocksVigilance.forEach(b => b.classList.add('highlight-active')); }
+
+        case 12: // Analyse Critique
+            const forts = slideEl.querySelectorAll('.bg-emerald-50\\/40');
+            const vigils = slideEl.querySelectorAll('.bg-rose-50\\/50');
+            const toutesAnalyses = [...forts, ...vigils];
+            toutesAnalyses.forEach((b, i) => {
+                if (i === (step - 1)) b.classList.add('highlight-active');
+                else b.classList.add('dimmed');
+            });
             break;
-        case 13:
-            const terrainSec = ctx.querySelector('#slide-13-left-page-content');
-            const avenirSec = ctx.querySelector('#slide-13-right-page-content');
-            if (step === 1 && terrainSec && avenirSec) { avenirSec.classList.add('dimmed'); terrainSec.classList.add('highlight-active'); }
-            if (step === 2 && terrainSec && avenirSec) { terrainSec.classList.add('dimmed'); avenirSec.classList.add('highlight-active'); }
+
+        case 13: // Bilan d'immersion (Intégration -> Terrain -> Savoir-être -> Blocs "Et après...")
+            const blocksLeft = slideEl.querySelectorAll('#slide-13-left-page-content .border-l-8');
+            const blocksRight = slideEl.querySelectorAll('#slide-13-right-page-content .bg-gradient-to-br');
+
+            if (step <= 3) {
+                if(pageD) pageD.classList.add('dimmed');
+                blocksLeft.forEach((b, i) => {
+                    if (i === (step - 1)) b.classList.add('highlight-active');
+                    else b.classList.add('dimmed');
+                });
+            } else {
+                if(pageG) pageG.classList.add('dimmed');
+                blocksRight.forEach((b, i) => {
+                    if (i === (step - 4)) b.classList.add('highlight-active');
+                    else b.classList.add('dimmed');
+                });
+            }
             break;
-        case 14:
-            const listeNoms = ctx.querySelector('.text-center.py-6.space-y-4');
-            if (step === 1 && listeNoms) { listeNoms.classList.add('highlight-active'); }
+case 14: // Apport du stage (Scrabble Automatique)
+    const merciContainer = slideEl.querySelector('.text-4xl.font-black.text-dgfip-blue');
+
+    const colonnes = {
+        2: slideEl.querySelectorAll('.scrabble-tile[style*="grid-column: 2"]'), 
+        4: slideEl.querySelectorAll('.scrabble-tile[style*="grid-column: 4"]'), 
+        6: slideEl.querySelectorAll('.scrabble-tile[style*="grid-column: 6"]'), 
+        8: slideEl.querySelectorAll('.scrabble-tile[style*="grid-column: 8"]'), 
+        10: slideEl.querySelectorAll('.scrabble-tile[style*="grid-column: 10"]')
+    };
+
+    const lettresMerci = {
+        M: slideEl.querySelector('.scrabble-tile-main[style*="grid-column: 2"]'),
+        E: slideEl.querySelector('.scrabble-tile-main[style*="grid-column: 4"]'),
+        R: slideEl.querySelector('.scrabble-tile-main[style*="grid-column: 6"]'),
+        C: slideEl.querySelector('.scrabble-tile-main[style*="grid-column: 8"]'),
+        I: slideEl.querySelector('.scrabble-tile-main[style*="grid-column: 10"]')
+    };
+
+    // Fonction interne pour révéler un mot proprement
+    const revelerMot = (col, lettreKey) => {
+        if (lettresMerci[lettreKey]) {
+            lettresMerci[lettreKey].classList.add("active");
+            lettresMerci[lettreKey].classList.remove("dimmed");
+        }
+        if (colonnes[col]) {
+            colonnes[col].forEach((tuile, idx) => {
+                tuile.style.transitionDelay = `${idx * 30}ms`; // Effet cascade fluide
+                tuile.classList.add("tile-selected");
+                tuile.classList.remove("dimmed");
+                tuile.querySelectorAll('*').forEach(c => c.classList.remove('dimmed'));
+            });
+        }
+    };
+
+    // --- Séquence des étapes ---
+    if (step === 1) {
+        // Reset : tout en blanc/masqué
+        slideEl.querySelectorAll(".scrabble-tile").forEach(t => t.classList.remove("tile-selected"));
+        slideEl.querySelectorAll(".scrabble-tile-main").forEach(t => t.classList.remove("active"));
+        if (merciContainer) { merciContainer.style.opacity = "0"; merciContainer.style.visibility = "hidden"; }
+    } 
+    else if (step === 2) { revelerMot(2, "M"); } // M + MÉDIATION
+    else if (step === 3) { revelerMot(4, "E"); } // E + ENTRAIDE
+    else if (step === 4) { revelerMot(6, "R"); } // R + RIGUEUR
+    else if (step === 5) { revelerMot(8, "C"); } // C + CONFIANCE
+    else if (step === 6) { revelerMot(10, "I"); } // I + INTÉGRATION
+    else if (step === 7) { 
+        // Affichage final du "Merci beaucoup !"
+        if (merciContainer) {
+            merciContainer.style.opacity = "1";
+            merciContainer.style.visibility = "visible";
+            merciContainer.style.fontFamily = "'Caveat', cursive";
+            merciContainer.innerHTML = "<span>Merci beaucoup !</span>";
+            merciContainer.classList.remove('dimmed');
+        }
+    }
+    break;
+
+        case 16: // Portfolio Intro
+            const categories = slideEl.querySelectorAll('.grid.grid-cols-1.md\\:grid-cols-3 > div');
+            categories.forEach((c, i) => {
+                if (i === (step - 1)) c.classList.add('highlight-active');
+                else c.classList.add('dimmed');
+            });
             break;
-        case 16:
-            const thmPortfolio = ctx.querySelectorAll('.grid.grid-cols-1.md\\:grid-cols-3 > div');
-            thmPortfolio.forEach((t, i) => i === (step - 1) ? t.classList.add('highlight-active') : t.classList.add('dimmed'));
-            break;
-        case 17:
+
+                case 17: // Annexes Portfolio P1, P2, P3
         case 18:
         case 19:
-            const pageG = ctx.querySelector('[id$="-left-page-content"]');
-            const pageD = ctx.querySelector('[id$="-right-page-content"]');
-            if (step === 1 && pageG && pageD) { pageD.classList.add('dimmed'); pageG.classList.add('highlight-active'); }
-            if (step === 2 && pageG && pageD) { pageG.classList.add('dimmed'); pageD.classList.add('highlight-active'); }
+            if (step === 1) {
+                pageG.classList.add('highlight-active');
+                pageD.classList.add('dimmed');
+            } else {
+                pageD.classList.add('highlight-active');
+                pageG.classList.add('dimmed');
+            }
             break;
     }
+
+    // Sécurité globale : les éléments actifs ne doivent jamais rester floutés
+    slideEl.querySelectorAll('.highlight-active, .tile-selected, .active').forEach(activeBlock => {
+        activeBlock.classList.remove('dimmed');
+        activeBlock.querySelectorAll('*').forEach(child => {
+            child.classList.remove('dimmed');
+        });
+    });
 }
+
+
+
 
       // ==========================================
       // LOGIQUE DU MODE PLEIN ÉCRAN
