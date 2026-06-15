@@ -334,6 +334,59 @@
           backface-visibility: hidden;
       }
 
+
+
+
+.no-animations .highlight-active,
+.no-animations .highlight-active-blue,
+.no-animations .zoom-target-active,
+.no-animations .focus-active,
+.no-animations .dimmed {
+  transform: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.no-animations .is-zoomed > *:not(.zoom-target-active) {
+  opacity: 1 !important;
+  filter: none !important;
+  pointer-events: auto !important;
+}
+
+.no-animations .fade-in-up,
+.no-animations .highlight-active,
+.no-animations .highlight-active-blue,
+.no-animations .zoom-target-active,
+.no-animations .scrabble-tile,
+.no-animations .scrabble-tile-main {
+  filter: none !important;
+}
+
+.no-animations .fade-in-up {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.no-animations .is-zoomed > *:not(.zoom-target-active) {
+  opacity: 1 !important;
+  filter: none !important;
+  pointer-events: auto !important;
+}
+
+.no-animations .zoom-target-active,
+.no-animations .highlight-active,
+.no-animations .highlight-active-blue,
+.no-animations .scrabble-tile,
+.no-animations .scrabble-tile-main.active,
+.no-animations .scrabble-tile.tile-selected {
+  transform: none !important;
+}
+
+
+
+
       @media (min-width: 1400px) and (min-height: 850px) {
           .booklet-container, .booklet-scaler { transform: scale(1.0); }
       }
@@ -2557,12 +2610,16 @@ function nextSlide() {
     const timeElapsed = Date.now() - slideStartTime;
     const maxSteps = slideSteps[currentSlideIndex] || 0;
 
-    // Si moins de 10s et qu'il reste des sous-étapes à montrer
+    if (animationsDisabled()) {
+        currentSubStep = maxSteps;
+        if (currentSlideIndex < totalSlides) goToSlide(currentSlideIndex + 1);
+        return;
+    }
+
     if (maxSteps > 0 && currentSubStep < maxSteps && timeElapsed < 1000000) {
         currentSubStep++;
         applySubStep(currentSlideIndex, currentSubStep);
     } else {
-        // Changement de diapositive standard
         if (currentSlideIndex < totalSlides) goToSlide(currentSlideIndex + 1);
     }
 }
@@ -2756,9 +2813,10 @@ function updateCounters(currentTime) {
          nextSlide();
       });
 
-      window.addEventListener('resize', () => {
-         updateMasterBookPosition();
-      });
+window.addEventListener('resize', () => {
+   updateMasterBookPosition();
+   applyZoom();
+});
 
       function loadCoverImage() {
          const coverImg = document.getElementById('cover-image');
@@ -2849,7 +2907,15 @@ function updateCounters(currentTime) {
                <input type="checkbox" id="toggle-chrono" checked class="sr-only peer">
                <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500 relative"></div>
             </label>
+<label class="flex items-center justify-between gap-3 py-2">
+  <span class="text-sm font-medium text-slate-700">Tout masquer</span>
+  <input id="toggle-hide-all" type="checkbox" class="h-4 w-4 accent-[#003189]">
+</label>
 
+<label class="flex items-center justify-between gap-3 py-2">
+  <span class="text-sm font-medium text-slate-700">Désactiver les animations</span>
+  <input id="toggle-animations" type="checkbox" class="h-4 w-4 accent-[#003189]">
+</label>
             <label class="flex items-center justify-between cursor-pointer group">
                <span class="text-xs font-bold text-slate-600 group-hover:text-dgfip-blue transition">Horloge en temps réel</span>
                <input type="checkbox" id="toggle-clock" checked class="sr-only peer">
@@ -2960,9 +3026,76 @@ function updateCounters(currentTime) {
       const toggleClock = document.getElementById('toggle-clock');
       const toggleSidebar = document.getElementById('toggle-sidebar');
 
+const toggleHideAll = document.getElementById('toggle-hide-all');
+const toggleAnimations = document.getElementById('toggle-animations');
+
       const chronoWrapper = document.getElementById('presentation-timer-1')?.closest('.flex.items-center.gap-3');
       const clockWrapper = document.getElementById('live-clock')?.closest('.flex.items-center.gap-2');
       const sidebarContainer = document.querySelector('aside');
+const topBanner = document.querySelector('header');
+
+function applyHideAllState(enabled) {
+   if (sidebarContainer) {
+      sidebarContainer.style.display = enabled ? 'none' : 'flex';
+   }
+
+   if (topBanner) {
+      topBanner.style.display = enabled ? 'none' : '';
+   }
+
+   localStorage.setItem('dgfip_hide_all_ui', enabled);
+
+   if (toggleSidebar) {
+      toggleSidebar.checked = !enabled;
+      localStorage.setItem('dgfip_show_sidebar', !enabled);
+   }
+
+   setTimeout(updateMasterBookPosition, 50);
+}
+
+
+
+function animationsDisabled() {
+   return document.documentElement.classList.contains('no-animations');
+}
+
+function clearStepVisualEffects(scope = document) {
+   scope.querySelectorAll('.highlight-active, .highlight-active-blue, .zoom-target-active, .focus-active, .dimmed')
+      .forEach(el => {
+         el.classList.remove('highlight-active', 'highlight-active-blue', 'zoom-target-active', 'focus-active', 'dimmed');
+         el.style.transform = '';
+         el.style.transition = '';
+         el.style.opacity = '';
+         el.style.filter = '';
+         el.style.boxShadow = '';
+         el.style.color = '';
+         el.style.outline = '';
+         el.style.outlineOffset = '';
+         el.style.borderColor = '';
+      });
+
+   scope.querySelectorAll('.is-zoomed').forEach(el => {
+      el.classList.remove('is-zoomed');
+   });
+}
+
+
+
+function applyAnimationsState(disabled) {
+   document.documentElement.classList.toggle('no-animations', disabled);
+   localStorage.setItem('dgfip_disable_animations', disabled);
+
+   const currentSlideEl = document.getElementById(`slide-${currentSlideIndex}`);
+   if (!currentSlideEl) return;
+
+   if (disabled) {
+      clearStepVisualEffects(currentSlideEl);
+   } else {
+      applySubStep(currentSlideIndex, currentSubStep);
+   }
+}
+
+
 
       if (localStorage.getItem('dgfip_show_chrono') === 'false') {
          toggleChrono.checked = false;
@@ -2976,6 +3109,18 @@ function updateCounters(currentTime) {
          toggleSidebar.checked = false;
          if(sidebarContainer) sidebarContainer.style.display = 'none';
       }
+
+
+if (localStorage.getItem('dgfip_hide_all_ui') === 'true') {
+   if (toggleHideAll) toggleHideAll.checked = true;
+   applyHideAllState(true);
+}
+
+if (localStorage.getItem('dgfip_disable_animations') === 'true') {
+   if (toggleAnimations) toggleAnimations.checked = true;
+   applyAnimationsState(true);
+}
+
 
       toggleChrono.addEventListener('change', () => {
          if(chronoWrapper) {
@@ -2998,6 +3143,42 @@ function updateCounters(currentTime) {
             setTimeout(updateMasterBookPosition, 50);
          }
       });
+
+
+
+toggleHideAll?.addEventListener('change', () => {
+   applyHideAllState(toggleHideAll.checked);
+});
+
+toggleAnimations?.addEventListener('change', () => {
+   applyAnimationsState(toggleAnimations.checked);
+});
+
+
+let bookletZoomLevel = 1;
+
+function getVisibleBooklets() {
+   return document.querySelectorAll('.slide-active .booklet-container, .slide-active .booklet-scaler');
+}
+
+function applyZoom() {
+   const visibleBooklets = getVisibleBooklets();
+   visibleBooklets.forEach(el => {
+      el.style.transform = `scale(${bookletZoomLevel})`;
+      el.style.transformOrigin = 'center center';
+   });
+
+   const zoomIndicator = document.getElementById('zoom-value-indicator');
+   if (zoomIndicator) {
+      zoomIndicator.textContent = `${Math.round(bookletZoomLevel * 100)}%`;
+   }
+}
+
+
+
+
+
+
 
       applyZoom();
 
@@ -3063,19 +3244,38 @@ goToSlide = function(index) {
     slideStartTime = Date.now();
     currentSubStep = 0;
     originalGoToSlide(index);
+
+    requestAnimationFrame(() => {
+        applyZoom();
+    });
+
+    setTimeout(() => {
+        applyZoom();
+    }, 80);
+
+    setTimeout(() => {
+        applyZoom();
+    }, 700);
 };
 
 function applySubStep(slideIndex, step) {
     const slideEl = document.getElementById(`slide-${slideIndex}`);
     if (!slideEl) return;
 
+    clearStepVisualEffects(slideEl);
+
+    if (animationsDisabled()) {
+        return;
+    }
+
     // 1. RÉINITIALISATION TOTALE (Nettoyage de la double page)
-    slideEl.querySelectorAll('.highlight-active, .zoom-target-active, .focus-active').forEach(el => {
-        el.classList.remove('highlight-active', 'zoom-target-active', 'focus-active');
+    slideEl.querySelectorAll('.highlight-active, .zoom-target-active, .focus-active, .highlight-active-blue').forEach(el => {
+        el.classList.remove('highlight-active', 'zoom-target-active', 'focus-active', 'highlight-active-blue');
     });
+
     slideEl.querySelectorAll('div, h3, h4, h5, img, i, p, span, section').forEach(el => {
         el.classList.remove('dimmed');
-    });
+   });
 
     // Étape 0 : Tout est normal au début
     if (step === 0) return;
@@ -3141,34 +3341,37 @@ function applySubStep(slideIndex, step) {
             });
             break;
 
-        case 7: // Cycle & Étapes (Le titre reste intact et visible)
-            const cycleLeft = slideEl.querySelectorAll('#slide-7-left-page-content .flex.items-center');
-            const etapesRight = slideEl.querySelectorAll('.ml-20.flex.flex-col.justify-between.h-full > div');
-            const titreCycle = slideEl.querySelector('#slide-7-left-page-content h3')?.parentElement;
+        case 7:
+    const titreCycle = slideEl.querySelector('#slide-7-left-page-content h3');
+    const cycleLeft = Array.from(
+      slideEl.querySelectorAll('#slide-7-left-page-content .border-l-8')
+    ).filter(el => el.querySelector('h4'));
 
-            if (step <= 3) {
-                if(pageD) pageD.classList.add('dimmed');
-                cycleLeft.forEach((b, i) => {
-                    if (i === (step - 1)) b.classList.add('highlight-active');
-                    else b.classList.add('dimmed');
-                });
+    const etapesRight = slideEl.querySelectorAll('#slide-7-right-page-content .ml-20 > div');
+    
+    if (step <= 3) {
+        if (pageD) pageD.classList.add('dimmed');
+        cycleLeft.forEach((b, i) => {
+            if (i === (step - 1)) b.classList.add('highlight-active');
+            else b.classList.add('dimmed');
+        });
+    } else {
+        if (pageG) pageG.classList.add('dimmed');
+        if (titreCycle) titreCycle.classList.remove('dimmed');
+        const targetEtapeIndex = step - 4;
+        etapesRight.forEach((et, i) => {
+            if (i === targetEtapeIndex) {
+                et.style.transform = 'scale(1.08) translateX(10px)';
+                et.style.transition = 'all 0.4s ease';
+                et.querySelector('p').style.color = '#003189';
+                et.querySelector('div').style.boxShadow = '0 0 15px #f29400';
             } else {
-                if(pageG) pageG.classList.add('dimmed');
-                if(titreCycle) titreCycle.classList.remove('dimmed'); // Empêche le titre de se flouter
-                const targetEtapeIndex = step - 4;
-                etapesRight.forEach((et, i) => {
-                    if (i === targetEtapeIndex) {
-                        et.style.transform = 'scale(1.08) translateX(10px)';
-                        et.style.transition = 'all 0.4s ease';
-                        et.querySelector('p').style.color = '#003189';
-                        et.querySelector('div').style.boxShadow = '0 0 15px #f29400';
-                    } else {
-                        et.classList.add('dimmed');
-                        et.style.transform = 'scale(0.95)';
-                    }
-                });
+                et.classList.add('dimmed');
+                et.style.transform = 'scale(0.95)';
             }
-            break;
+        });
+    }
+    break;
 
         case 8: // Recouvrement Forcé
             const procCoercitif = slideEl.querySelector('#slide-8-left-page-content .bg-gradient-to-br');
@@ -3545,14 +3748,52 @@ case 14: // Apport du stage (Scrabble Automatique)
       // ==========================================
 window.addEventListener('keydown', (e) => {
      if (isTransitioning) return;
-     
-     // 1. RACCOURCI DIRECT / ISSUE DE SECOURS (Touche "+" du clavier ou du pavé numérique)
-     if (e.key === '+' || e.key === 'Add') {
+
+     // 1. ZOOM LIVRET (+)
+     if (e.key === '+' || e.key === '=' || e.key === 'Add') {
          e.preventDefault();
-         forceNextSlide(); 
+         bookletZoomLevel = Math.min(bookletZoomLevel + 0.1, 1.8);
+         applyZoom();
          return;
      }
 
+     // 2. DÉZOOM LIVRET (-)
+     if (e.key === '-' || e.key === '_' || e.key === 'Subtract') {
+         e.preventDefault();
+         bookletZoomLevel = Math.max(bookletZoomLevel - 0.1, 0.6);
+         applyZoom();
+         return;
+     }
+
+     // 3. TOUT MASQUER / RÉAFFICHER
+     if (e.key === 'a' || e.key === 'A') {
+         e.preventDefault();
+         const nextState = localStorage.getItem('dgfip_hide_all_ui') !== 'true';
+         applyHideAllState(nextState);
+         if (toggleHideAll) toggleHideAll.checked = nextState;
+         return;
+     }
+
+     // 4. PLEIN ÉCRAN
+     if (e.key === 'f' || e.key === 'F') {
+         e.preventDefault();
+
+         if (!document.fullscreenElement) {
+             document.documentElement.requestFullscreen().then(() => {
+                 if (textFullscreen) textFullscreen.innerText = "Quitter le plein écran";
+                 if (iconFullscreen) iconFullscreen.setAttribute('data-lucide', 'minimize');
+                 lucide.createIcons();
+             }).catch(err => {
+                 console.error(`Erreur plein écran: ${err.message}`);
+             });
+         } else {
+             document.exitFullscreen();
+             if (textFullscreen) textFullscreen.innerText = "Plein écran (F11)";
+             if (iconFullscreen) iconFullscreen.setAttribute('data-lucide', 'maximize');
+             lucide.createIcons();
+         }
+         return;
+     }
      // 2. NAVIGATION INTERNE OU STANDARD (Espace, Télécommande, Entrée, Flèches)
      if (['PageDown', ' ', 'Enter'].includes(e.key) || e.code === 'Space') {
          e.preventDefault();
