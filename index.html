@@ -979,18 +979,36 @@
 
 
 
-
 <div id="slide-4" class="slide-container slide-inactive flex flex-col justify-center">
     <div class="booklet-container bg-white rounded-2xl premium-book-shadow absolute grid grid-cols-2" style="width: 1000px; height: 700px; top: 50%; left: 50%; margin-left: -500px; margin-top: -350px;">
         <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-slate-200 z-10"></div>
         <div class="absolute left-[calc(50%-12px)] top-0 bottom-0 w-6 bg-gradient-to-r from-transparent via-black/[0.08] to-transparent pointer-events-none z-10"></div>
         
         <div id="slide-4-left-page-content" class="p-10 border-r border-slate-100 flex flex-col justify-between text-slate-800 bg-gradient-to-r from-slate-50 to-white relative rounded-l-xl border-y border-l border-slate-200 shadow-inner">
-            <div class="space-y-4">
-                <div class="flex items-center justify-center gap-3 border-b-2 border-dgfip-orange pb-3 w-full shrink-0">
+            <div class="space-y-6 flex-1 flex flex-col">
+                <div class="flex items-center justify-center gap-3 border-b-2 border-dgfip-orange pb-3 w-full shrink-0 h-[76px]">
                     <span class="text-dgfip-orange font-mono text-2xl font-black">03 /</span>
+                    <h3 class="text-2xl font-black text-dgfip-blue uppercase tracking-tight text-center leading-tight">
+                        Le SGC Clermont Auvergne Métropole et Amendes
+                    </h3>
+                </div>
+
+                <div class="flex-1 rounded-2xl border-4 border-white shadow-xl relative overflow-hidden my-4 bg-slate-100">
+                    <img
+                        src="maps.png"
+                        alt="Localisation du SGC Clermont Métropole"
+                        class="w-full h-full object-cover"
+                    />
+                </div>
+            </div>
+        </div>
+
+        <div id="slide-4-right-page-content" class="p-10 flex flex-col justify-between text-slate-800 bg-gradient-to-l from-slate-50 to-white relative rounded-r-xl border-y border-r border-slate-200 shadow-md">
+            <div class="space-y-4 w-full">
+                <div class="flex items-center justify-center gap-3 border-b-2 border-dgfip-orange pb-3 w-full shrink-0 h-[76px]">
                     <h3 class="text-2xl font-black text-dgfip-blue uppercase tracking-wider text-center">Obtention du Stage</h3>
                 </div>
+                
                 <div class="flex flex-col gap-4 pt-4">
                     <div class="bg-white p-5 rounded-xl border-2 border-slate-200 shadow-sm h-[145px] flex flex-col justify-center">
                         <span class="text-xl font-black text-dgfip-blue uppercase tracking-widest">Septembre</span>
@@ -1006,22 +1024,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-<div id="slide-4-right-page-content" class="p-10 flex flex-col justify-between text-slate-800 bg-gradient-to-l from-slate-50 to-white relative rounded-r-xl border-y border-r border-slate-200 shadow-md">
-    <div class="space-y-6 flex-1 flex flex-col">
-        <div class="flex items-center justify-center gap-3 border-b-2 border-dgfip-orange pb-3 w-full shrink-0">
-            <h3 class="text-2xl font-black text-dgfip-blue uppercase tracking-tight text-center">
-                Le SGC Clermont Métropole
-            </h3>
-        </div>
-
-        <div class="flex-1 rounded-2xl border-4 border-white shadow-xl relative overflow-hidden my-4 bg-slate-100">
-            <img
-                src="maps.png"
-                alt="Localisation du SGC Clermont Métropole"
-                class="w-full h-full object-cover"
-            />
         </div>
     </div>
 </div>
@@ -3521,6 +3523,15 @@ case 14: // Apport du stage (Scrabble Automatique)
       let presentateurWindow = null;
 
       hdmiChannel.onmessage = (event) => {
+
+
+
+
+
+// À ajouter dans la fonction hdmiChannel.onmessage = (event) => { ... }
+if (event.data.type === 'TOGGLE_MENU_FROM_PRESENTATEUR') {
+    document.getElementById('btn-outils-trigger')?.click();
+}
           if (event.data.type === 'GOTO_SLIDE') {
               goToSlide(event.data.index);
           } else if (event.data.type === 'TOGGLE_TIMER') {
@@ -3571,12 +3582,27 @@ const presentateurHtml = `
             #notes-area { font-size: 1.2rem; transition: font-size 0.2s; }
         </style>
     </head>
-    <body class="h-screen w-screen flex flex-col p-6 gap-4">
+    <body class="h-screen w-screen flex flex-col p-6 gap-4 relative overflow-hidden">
+        
+        <!-- MENU PLAN ACCESSIBLE VIA "M" (Uniquement côté présentateur) -->
+        <div id="plan-menu" class="absolute inset-y-0 left-0 w-80 bg-slate-900 text-slate-100 shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 flex flex-col border-r border-slate-700">
+            <div class="p-4 border-b border-slate-700 flex items-center justify-between bg-slate-950">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="list-video" class="text-amber-500 w-5 h-5"></i>
+                    <h2 class="text-xs font-black uppercase tracking-widest">Plan de la Soutenance</h2>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded border border-slate-700 font-mono">Touche M</span>
+            </div>
+            <div id="plan-list" class="flex-1 overflow-y-auto p-4 space-y-1">
+                <!-- Injecté dynamiquement par le script -->
+            </div>
+        </div>
+
         <div class="flex flex-1 gap-6 overflow-hidden">
             <div class="w-1/2 flex flex-col bg-white rounded-2xl shadow-xl border border-slate-200 p-6">
                 <div class="flex justify-between items-center mb-4">
                     <div class="flex items-center gap-2">
-                        <i data-lucide="pencil-line" class="text-dgfip-blue w-5 h-5"></i>
+                        <i data-lucide="pencil-line" class="text-blue-900 w-5 h-5"></i>
                         <h2 class="text-sm font-black uppercase tracking-widest text-slate-500">Notes de la Slide</h2>
                     </div>
                     <div class="flex items-center gap-2 bg-slate-100 p-1 rounded-lg">
@@ -3587,7 +3613,7 @@ const presentateurHtml = `
                 </div>
                 <textarea id="notes-area" 
                     class="flex-1 w-full p-4 rounded-xl border-2 border-slate-100 focus:border-blue-400 focus:outline-none resize-none leading-relaxed" 
-                    placeholder="Écrivez vos notes pour cette diapo ici (sauvegarde auto)..."></textarea>
+                    placeholder="Écrivez vos notes pour cette diapo ici..."></textarea>
             </div>
 
             <div class="w-1/2 flex flex-col gap-4">
@@ -3597,7 +3623,9 @@ const presentateurHtml = `
                             <span id="slide-number" class="text-4xl font-black text-blue-900">1 / 20</span>
                             <p id="slide-title" class="text-slate-500 font-bold mt-1">Chargement...</p>
                         </div>
-                        <i data-lucide="monitor" class="w-10 h-10 text-slate-200"></i>
+                        <button onclick="togglePlanMenu()" class="p-3 bg-slate-100 hover:bg-slate-200 text-blue-900 rounded-xl transition flex items-center gap-2 font-bold text-xs uppercase">
+                            <i data-lucide="menu" class="w-5 h-5"></i> Voir le plan (M)
+                        </button>
                     </div>
                 </div>
 
@@ -3633,13 +3661,59 @@ const presentateurHtml = `
             let currentId = 1;
             let noteSize = 18;
 
-            // ZOOM TEXTE
+            const slidesData = [
+                { id: 1, title: "Page de garde", num: " —" },
+                { id: 2, title: "Introduction", num: "01" },
+                { id: 3, title: "La DGFiP & Contexte", num: "02" },
+                { id: 4, title: "Le SGC Clermont Métropole", num: "03" },  
+                { id: 5, title: "1. L'accueil téléphonique", num: "04" },
+                { id: 6, title: "Périmètre de Prise en Charge", num: "05" }, 
+                { id: 7, title: "Le Cycle de l'Amende", num: "06" },       
+                { id: 8, title: "Le Recouvrement Forcé", num: "07" },      
+                { id: 9, title: "Indicateurs de Performance", num: "08" }, 
+                { id: 10, title: "2. Recherche d'informations", num: "09" },  
+                { id: 11, title: "Savoirs Développés", num: "10" },        
+                { id: 12, title: "Analyse Critique", num: "11" },          
+                { id: 13, title: "Bilan d'Immersion", num: "12" },         
+                { id: 14, title: "Remerciements", num: "13" },             
+                { id: 15, title: "Clôture", num: " —" },                    
+                { id: 16, title: "Portfolio - Introduction", num: " —" },  
+                { id: 17, title: "1re expérience", num: "P1" },            
+                { id: 18, title: "2e expérience", num: "P2" },            
+                { id: 19, title: "3e expérience", num: "P3" },            
+                { id: 20, title: "Clôture Portfolio", num: " —" }          
+            ];
+
             function changeZoom(delta) {
                 noteSize += delta;
                 document.getElementById('notes-area').style.fontSize = noteSize + 'px';
             }
 
-            // GESTION DES NOTES PAR SLIDE
+            // GESTION DU MENU DROULANT DU PLAN
+            function togglePlanMenu() {
+                const menu = document.getElementById('plan-menu');
+                menu.classList.toggle('-translate-x-full');
+            }
+
+            function buildPlanMenu() {
+                const container = document.getElementById('plan-list');
+                container.innerHTML = '';
+                slidesData.forEach(slide => {
+                    const btn = document.createElement('button');
+                    btn.className = \`w-full text-left flex items-center gap-3 p-2 rounded-lg transition text-xs font-bold \${
+                        slide.id === currentId 
+                        ? 'bg-amber-500 text-slate-950 font-black' 
+                        : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                    }\`;
+                    btn.innerHTML = \`<span class="font-mono text-[10px] opacity-60">\${slide.num}</span><span class="truncate">\${slide.title}</span>\`;
+                    btn.onclick = () => {
+                        ctrl.postMessage({type:'GOTO_SLIDE', index: slide.id});
+                        togglePlanMenu();
+                    };
+                    container.appendChild(btn);
+                });
+            }
+
             const area = document.getElementById('notes-area');
             area.addEventListener('input', () => {
                 localStorage.setItem('notes_slide_' + currentId, area.value);
@@ -3648,9 +3722,9 @@ const presentateurHtml = `
             function loadNote(id) {
                 currentId = id;
                 area.value = localStorage.getItem('notes_slide_' + id) || "";
+                buildPlanMenu();
             }
 
-            // RÉCEPTION DES DONNÉES (CHRONO + SLIDE)
             ctrl.onmessage = (e) => {
                 if (e.data.type === 'UPDATE_STATE') {
                     if(currentId !== e.data.currentIndex) loadNote(e.data.currentIndex);
@@ -3658,30 +3732,35 @@ const presentateurHtml = `
                     document.getElementById('slide-number').innerText = e.data.currentIndex + ' / 20';
                     document.getElementById('slide-title').innerText = e.data.title;
                     
-                    // Update Chronos
                     const fmt = (s) => String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
                     document.getElementById('chrono-1').innerText = fmt(e.data.secondsSoutenance);
                     document.getElementById('chrono-2').innerText = fmt(e.data.secondsPortfolio);
 
-                    // Update Play/Pause Icon
                     const icon = document.getElementById('play-icon');
                     icon.setAttribute('data-lucide', e.data.timerRunning ? 'pause' : 'play');
                     lucide.createIcons();
                 }
             };
 
-            // BOUTONS DE CONTRÔLE
+            // ÉCOUTE DE LA TOUCHE "M" SUR LA POPUP PRÉSENTATEUR
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'm' || e.key === 'M') {
+                    e.preventDefault();
+                    togglePlanMenu();
+                }
+            });
+
             document.getElementById('btn-prev').onclick = () => ctrl.postMessage({type:'GOTO_SLIDE', index: Math.max(1, currentId-1)});
             document.getElementById('btn-next').onclick = () => ctrl.postMessage({type:'GOTO_SLIDE', index: Math.min(20, currentId+1)});
             document.getElementById('btn-play').onclick = () => ctrl.postMessage({type:'TOGGLE_TIMER'});
 
-            // Demande l'état au démarrage
             ctrl.postMessage({ type: 'REQUEST_INITIAL_STATE' });
             lucide.createIcons();
         <\/script>
     </body>
     </html>
 `;
+
         // Ouverture automatique (Note : les navigateurs bloquent l'ouverture automatique au chargement, 
         // une interaction clic est nécessaire comme ici)
         if (presentateurWindow === null || presentateurWindow.closed) {
@@ -3730,7 +3809,12 @@ if (e.key === 'p' || e.key === 'P') {
     return;
 }
 
-
+// AJOUT : Touche M pour déclencher le clic sur le bouton de configuration/outils
+if (e.key === 'm' || e.key === 'M') {
+    e.preventDefault();
+    document.getElementById('btn-outils-trigger')?.click();
+    return;
+}
 
      // 3. TOUT MASQUER / RÉAFFICHER
      if (e.key === 'a' || e.key === 'A') {
